@@ -1,0 +1,165 @@
+import React, { useState } from 'react';
+
+const nodeTypes = {
+  input: InputNode,
+  default: DefaultNode,
+  output: OutputNode,
+};
+
+const edgeTypes = {
+  buttonedge: ButtonEdge,
+};
+
+function DiagramFlow() {
+  const [nodes, setNodes] = useState([
+    {
+      id: 'node-1',
+      type: 'input',
+      data: { label: 'Node 1' },
+      position: [250, 5],
+    },
+    {
+      id: 'node-2',
+      type: 'default',
+      data: { label: 'Node 2' },
+      position: [100, 100],
+    },
+    {
+      id: 'node-3',
+      type: 'output',
+      data: { label: 'Node 3' },
+      position: [400, 100],
+    },
+  ]);
+
+  const [edges, setEdges] = useState([
+    {
+      id: 'edge-1',
+      source: 'node-1',
+      target: 'node-2',
+    },
+    {
+      id: 'edge-2',
+      source: 'node-2',
+      target: 'node-3',
+    },
+  ]);
+
+  const [nodeName, setNodeName] = useState('');
+  const [sourceNode, setSourceNode] = useState('');
+  const [targetNode, setTargetNode] = useState('');
+
+  const addNode = () => {
+    const newNode = {
+      id: Math.random().toString(),
+      type: 'default',
+      data: { label: nodeName },
+      position: [100, 100],
+    };
+    setNodes((nds) => [...nds, newNode]);
+    setNodeName('');
+  };
+
+  const addEdge = () => {
+    const newEdge = {
+      id: Math.random().toString(),
+      source: sourceNode,
+      target: targetNode,
+    };
+    setEdges((eds) => [...eds, newEdge]);
+    setSourceNode('');
+    setTargetNode('');
+  };
+
+  const deleteNode = (id) => {
+    setNodes((nds) => nds.filter((node) => node.id !== id));
+  };
+
+  const deleteEdge = (id) => {
+    setEdges((eds) => eds.filter((edge) => edge.id !== id));
+  };
+
+  return (
+    <div className="flex h-screen">
+      <div className="w-1/4 bg-gray-200 p-4">
+        <input
+          type="text"
+          value={nodeName}
+          onChange={(e) => setNodeName(e.target.value)}
+          placeholder="Node name"
+          className="w-full p-2 mb-4 border border-gray-400 rounded"
+        />
+        <button onClick={addNode} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Add Node
+        </button>
+        <input
+          type="text"
+          value={sourceNode}
+          onChange={(e) => setSourceNode(e.target.value)}
+          placeholder="Source node"
+          className="w-full p-2 mb-4 border border-gray-400 rounded"
+        />
+        <input
+          type="text"
+          value={targetNode}
+          onChange={(e) => setTargetNode(e.target.value)}
+          placeholder="Target node"
+          className="w-full p-2 mb-4 border border-gray-400 rounded"
+        />
+        <button onClick={addEdge} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Add Edge
+        </button>
+      </div>
+      <div className="w-3/4">
+        <div className="flex flex-col h-full">
+          {nodes.map((node) => (
+            <div key={node.id} className="bg-gray-400 p-4 rounded mb-4">
+              <p className="text-white">{node.data.label}</p>
+              {edges
+                .filter((edge) => edge.source === node.id)
+                .map((edge) => (
+                  <div key={edge.id} className="bg-orange-500 p-4 rounded mt-4">
+                    <p className="text-white">{edge.target}</p>
+                  </div>
+                ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InputNode({ data }) {
+  return (
+    <div className="bg-blue-500 p-4 rounded">
+      <p className="text-white">{data.label}</p>
+    </div>
+  );
+}
+
+function DefaultNode({ data }) {
+  return (
+    <div className="bg-gray-400 p-4 rounded">
+      <p className="text-white">{data.label}</p>
+    </div>
+  );
+}
+
+function OutputNode({ data }) {
+  return (
+    <div className="bg-green-500 p-4 rounded">
+      <p className="text-white">{data.label}</p>
+    </div>
+  );
+}
+
+function ButtonEdge({ id, source, target }) {
+  return (
+    <div className="bg-orange-500 p-4 rounded">
+      <p className="text-white">{id}</p>
+    </div>
+  );
+}
+
+export default DiagramFlow;
